@@ -40,8 +40,11 @@ export const LevelUpModal: React.FC<LevelUpModalProps> = ({
             ━━━━━━━━ SYSTEM NOTIFICATION ━━━━━━━━
           </div>
           <h2 className="text-2xl sm:text-4xl font-black font-orbitron text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-300 to-pink-400 neon-cyan-text">
-            LEVEL UP!
+            ⚔️ LEVEL UP!
           </h2>
+          <div className="text-xs sm:text-sm font-orbitron font-bold text-cyan-300 tracking-wider">
+            PLAYER HAS BECOME STRONGER
+          </div>
         </div>
 
         {/* Level Change Banner */}

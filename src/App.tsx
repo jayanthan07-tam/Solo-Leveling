@@ -377,7 +377,7 @@ export function App() {
       case 'study':
         return <StudyView onCompleteStudySession={handleCompleteStudySession} />;
       case 'fitness':
-        return <QuestsView quests={state.quests} onCompleteQuest={handleCompleteQuest} onAddCustomQuest={handleAddCustomQuest} />;
+        return <QuestsView initialCategory="FITNESS" quests={state.quests} onCompleteQuest={handleCompleteQuest} onAddCustomQuest={handleAddCustomQuest} />;
       case 'learning':
         return <LearningView skills={state.skills} onAddSkill={(name, cat, hrs) => setState((p) => ({ ...p, skills: [...p.skills, { id: 'sk-' + Date.now(), name, category: cat, targetHours: hrs, totalMinutes: 0, progressPercent: 0, xpEarned: 0, createdAt: new Date().toISOString() }] }))} onLogSkillSession={handleLogSkillSession} />;
       case 'tasks':

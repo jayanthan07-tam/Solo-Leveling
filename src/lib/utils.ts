@@ -19,7 +19,7 @@ export function generatePlayerId(): string {
 // XP required for next level formula: requiredXP = round(100 * 1.25^level)
 export function getRequiredXpForLevel(level: number): number {
   if (level <= 0) return 100;
-  return Math.round(100 * Math.pow(1.25, level));
+  return Math.round(100 * Math.pow(1.5, level));
 }
 
 // Calculate exact age in years from DOB

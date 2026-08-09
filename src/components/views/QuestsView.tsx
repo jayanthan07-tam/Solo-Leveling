@@ -10,15 +10,17 @@ interface QuestsViewProps {
   quests: Quest[];
   onCompleteQuest: (questId: string) => void;
   onAddCustomQuest: (title: string, category: CategoryType, xp: number, coins: number) => void;
+  initialCategory?: CategoryType;
 }
 
 export const QuestsView: React.FC<QuestsViewProps> = ({
   quests,
   onCompleteQuest,
   onAddCustomQuest,
+  initialCategory,
 }) => {
-  const [activeTab, setActiveTab] = useState<CategoryType>('STUDY');
-  const [showFitnessModal, setShowFitnessModal] = useState(false);
+  const [activeTab, setActiveTab] = useState<CategoryType>(initialCategory || 'STUDY');
+  const [showFitnessModal, setShowFitnessModal] = useState(initialCategory === 'FITNESS');
   const [showAddModal, setShowAddModal] = useState(false);
 
   const [newTitle, setNewTitle] = useState('');
