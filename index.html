@@ -2,11 +2,11 @@
 <html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href="%BASE_URL%favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta name="theme-color" content="#0a0814" />
     <meta name="description" content="Solo Leveling Life System - Futuristic anime RPG HUD personal development system for Study, Fitness, Learning, and Daily Quests." />
-    <link rel="manifest" href="/manifest.json" />
+    <link rel="manifest" href="%BASE_URL%manifest.json" />
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,8 +21,9 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js').catch(err => {
-            console.log('SW registration failed: ', err);
+          const swUrl = (window.location.pathname.endsWith('/') ? window.location.pathname : window.location.pathname + '/') + 'sw.js';
+          navigator.serviceWorker.register(swUrl).catch(err => {
+            console.log('SW registration note: ', err);
           });
         });
       }

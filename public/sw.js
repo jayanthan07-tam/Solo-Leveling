@@ -1,15 +1,17 @@
-const CACHE_NAME = 'solo-system-v1';
+const CACHE_NAME = 'solo-system-v2';
 const ASSETS_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/favicon.svg'
+  './',
+  './index.html',
+  './manifest.json',
+  './favicon.svg'
 ];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS_TO_CACHE);
+      return cache.addAll(ASSETS_TO_CACHE).catch(() => {
+        // Fallback for non-critical SW cache assets
+      });
     })
   );
   self.skipWaiting();
@@ -38,7 +40,7 @@ self.addEventListener('fetch', (event) => {
         return cachedResponse;
       }
       return fetch(event.request).catch(() => {
-        return caches.match('/');
+        return caches.match('./');
       });
     })
   );
