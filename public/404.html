@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Solo Leveling | Redirecting...</title>
+    <script>
+      // Single Page Apps for GitHub Pages
+      // Redirect 404 routes back to the main app root
+      const pathSegments = window.location.pathname.split('/');
+      const repoName = 'Solo-Leveling';
+      const repoIndex = pathSegments.indexOf(repoName);
+      
+      let redirectUrl = '/Solo-Leveling/';
+      if (repoIndex !== -1) {
+        redirectUrl = '/' + pathSegments.slice(1, repoIndex + 1).join('/') + '/';
+      }
+      window.location.replace(redirectUrl);
+    </script>
+  </head>
+  <body style="background-color: #05040a; color: #00f0ff; font-family: monospace; text-align: center; padding-top: 20vh;">
+    <h2>[ SYSTEM RE-ROUTING... ]</h2>
+    <p>Redirecting to Solo Leveling Life System HUD...</p>
+  </body>
+</html>

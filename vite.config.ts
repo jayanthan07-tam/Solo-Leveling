@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   plugins: [react(), tailwindcss()],
-  base: process.env.NODE_ENV === 'production' ? '/Solo-Leveling/' : '/',
-})
+  base: command === 'build' ? '/Solo-Leveling/' : '/',
+}))
