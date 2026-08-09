@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <linearGradient id="glow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#a855f7"/>
+      <stop offset="50%" stop-color="#06b6d4"/>
+      <stop offset="100%" stop-color="#ec4899"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#a855f7" flood-opacity="0.8"/>
+    </filter>
+  </defs>
+  <rect width="100" height="100" rx="20" fill="#090714"/>
+  <!-- Hexagon outline -->
+  <polygon points="50,12 85,30 85,70 50,88 15,70 15,30" fill="none" stroke="url(#glow)" stroke-width="3" filter="url(#shadow)"/>
+  <!-- Inner S emblem -->
+  <path d="M 60,32 L 38,32 L 35,46 L 62,50 L 58,68 L 35,68" fill="none" stroke="#00f0ff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="50" cy="50" r="3" fill="#a855f7"/>
+</svg>

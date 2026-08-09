@@ -1,0 +1,164 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-main: #05040a;
+    --panel-bg: rgba(15, 12, 29, 0.7);
+    --panel-border: rgba(168, 85, 247, 0.25);
+    --neon-purple: #a855f7;
+    --neon-cyan: #00f0ff;
+    --neon-pink: #ec4899;
+    --neon-blue: #3b82f6;
+  }
+
+  body {
+    background-color: #05040a;
+    color: #e2e8f0;
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, .font-orbitron {
+    font-family: 'Orbitron', sans-serif;
+  }
+
+  .font-rajdhani {
+    font-family: 'Rajdhani', sans-serif;
+  }
+}
+
+/* Glassmorphism & Liquid 3D Panels */
+.glass-panel {
+  background: linear-gradient(135deg, rgba(15, 12, 29, 0.75) 0%, rgba(26, 20, 48, 0.5) 100%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(168, 85, 247, 0.2);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5),
+              inset 0 1px 1px 0 rgba(255, 255, 255, 0.1),
+              0 0 15px rgba(168, 85, 247, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-panel:hover {
+  border-color: rgba(0, 240, 255, 0.4);
+  box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.7),
+              inset 0 1px 2px 0 rgba(255, 255, 255, 0.2),
+              0 0 25px rgba(0, 240, 255, 0.25);
+  transform: translateY(-2px) scale(1.005);
+}
+
+/* Neon Borders & Glow */
+.neon-border-purple {
+  border: 1px solid #a855f7;
+  box-shadow: 0 0 15px rgba(168, 85, 247, 0.4), inset 0 0 15px rgba(168, 85, 247, 0.2);
+}
+
+.neon-border-cyan {
+  border: 1px solid #00f0ff;
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.4), inset 0 0 15px rgba(0, 240, 255, 0.2);
+}
+
+.neon-glow-text {
+  text-shadow: 0 0 10px rgba(168, 85, 247, 0.8), 0 0 20px rgba(168, 85, 247, 0.4);
+}
+
+.neon-cyan-text {
+  text-shadow: 0 0 10px rgba(0, 240, 255, 0.8), 0 0 20px rgba(0, 240, 255, 0.4);
+}
+
+/* 3D Liquid Button */
+.liquid-btn {
+  position: relative;
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.8) 0%, rgba(124, 58, 237, 0.9) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+  overflow: hidden;
+  transition: all 0.25s ease;
+}
+
+.liquid-btn::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(0, 240, 255, 0.4) 0%, transparent 60%);
+  transform: scale(0);
+  transition: transform 0.4s ease-out;
+}
+
+.liquid-btn:hover::before {
+  transform: scale(1);
+}
+
+.liquid-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 240, 255, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.6);
+  border-color: #00f0ff;
+}
+
+.liquid-btn:active {
+  transform: translateY(1px);
+}
+
+/* Futuristic Scanline Overlay */
+.scanline {
+  background: linear-gradient(
+    to bottom,
+    rgba(255,255,255,0),
+    rgba(255,255,255,0) 50%,
+    rgba(0, 0, 0, 0.3) 50%,
+    rgba(0, 0, 0, 0.3)
+  );
+  background-size: 100% 4px;
+}
+
+/* Hexagon Grid Overlay */
+.hex-pattern {
+  background-image: radial-gradient(rgba(168, 85, 247, 0.12) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Liquid Animated XP Bar */
+@keyframes liquidFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.liquid-xp-bar {
+  background: linear-gradient(90deg, #a855f7, #ec4899, #00f0ff, #a855f7);
+  background-size: 300% 100%;
+  animation: liquidFlow 4s ease infinite;
+}
+
+/* Level Up Pulse */
+@keyframes systemPulse {
+  0% { box-shadow: 0 0 0 0 rgba(0, 240, 255, 0.7); }
+  70% { box-shadow: 0 0 0 25px rgba(0, 240, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 240, 255, 0); }
+}
+
+.system-pulse {
+  animation: systemPulse 2s infinite;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(5, 4, 10, 0.8);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(168, 85, 247, 0.4);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #00f0ff;
+}

@@ -1,0 +1,17 @@
+{
+  "short_name": "Solo System",
+  "name": "Solo Leveling Life System",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "512x512 192x192 64x64 32x32"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#05040a",
+  "theme_color": "#0a0814",
+  "display": "standalone",
+  "orientation": "portrait",
+  "categories": ["productivity", "utilities", "lifestyle"]
+}
