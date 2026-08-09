@@ -33,16 +33,16 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
 
   const mainTabs = [
     { id: 'dashboard', label: 'Home', icon: LayoutDashboard },
-    { id: 'quests', label: 'Quests', icon: Swords },
-    { id: 'stats', label: 'Stats', icon: BarChart3 },
+    { id: 'fitness', label: 'Fitness', icon: Dumbbell },
+    { id: 'study', label: 'Study', icon: BookOpen },
+    { id: 'tasks', label: 'Tasks', icon: CheckSquare },
     { id: 'balance', label: 'Balance', icon: Wallet },
   ];
 
   const moreItems = [
-    { id: 'study', label: 'Study Timer', icon: BookOpen },
-    { id: 'fitness', label: 'Fitness Quest', icon: Dumbbell },
+    { id: 'quests', label: 'Quests Board', icon: Swords },
     { id: 'learning', label: 'Learning Matrix', icon: Brain },
-    { id: 'tasks', label: 'Daily Tasks', icon: CheckSquare },
+    { id: 'stats', label: 'Character Stats', icon: BarChart3 },
     { id: 'achievements', label: 'Achievements', icon: Trophy },
     { id: 'equipment', label: 'Equipment Shop', icon: ShoppingBag },
     { id: 'history', label: 'Activity Log', icon: History },
@@ -54,7 +54,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
   return (
     <>
       {/* Mobile Bottom Bar */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#070512]/95 backdrop-blur-2xl border-t border-purple-500/30 shadow-2xl px-2 py-1.5 flex items-center justify-around">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#070512]/95 backdrop-blur-2xl border-t border-purple-500/30 shadow-2xl px-2 py-1.5 pb-[calc(0.375rem+env(safe-area-inset-bottom))] flex items-center justify-around">
         {mainTabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeView === tab.id;
@@ -102,47 +102,55 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
 
       {/* More Menu Slide-up Sheet */}
       {showMoreMenu && (
-        <div className="lg:hidden fixed inset-0 z-30 bg-slate-950/90 backdrop-blur-xl pt-20 pb-24 px-4 overflow-y-auto animate-fadeIn">
-          <div className="flex items-center justify-between pb-3 mb-4 border-b border-purple-500/30">
-            <div className="font-orbitron font-bold text-cyan-400 text-sm tracking-wider">
-              SYSTEM MODULES
+        <div
+          className="lg:hidden fixed inset-0 z-30 bg-slate-950/90 backdrop-blur-xl pt-16 pb-[calc(6rem+env(safe-area-inset-bottom))] px-4 overflow-y-auto animate-fadeIn"
+          onClick={() => setShowMoreMenu(false)}
+        >
+          <div
+            className="max-w-md mx-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between pb-3 mb-4 border-b border-purple-500/30">
+              <div className="font-orbitron font-bold text-cyan-400 text-sm tracking-wider">
+                SYSTEM MODULES
+              </div>
+              <button
+                onClick={() => setShowMoreMenu(false)}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-purple-900/40"
+              >
+                <X className="w-5 h-5" />
+              </button>
             </div>
-            <button
-              onClick={() => setShowMoreMenu(false)}
-              className="p-1 rounded-lg text-slate-400 hover:text-white"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            {moreItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = activeView === item.id;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => {
-                    sound.playClick();
-                    onSelectView(item.id);
-                    setShowMoreMenu(false);
-                  }}
-                  className={cn(
-                    'flex items-center space-x-3 p-3.5 rounded-xl border text-left transition-all',
-                    isActive
-                      ? 'bg-gradient-to-r from-purple-900 to-cyan-950 text-cyan-300 border-cyan-400 shadow-lg'
-                      : 'bg-slate-900/80 border-purple-500/20 text-slate-300 hover:border-purple-500/40'
-                  )}
-                >
-                  <div className="p-2 rounded-lg bg-purple-950/80 border border-purple-500/30">
-                    <Icon className="w-5 h-5 text-cyan-400" />
-                  </div>
-                  <div>
-                    <div className="text-xs font-orbitron font-bold">{item.label}</div>
-                  </div>
-                </button>
-              );
-            })}
+            <div className="grid grid-cols-2 gap-3">
+              {moreItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = activeView === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      sound.playClick();
+                      onSelectView(item.id);
+                      setShowMoreMenu(false);
+                    }}
+                    className={cn(
+                      'flex items-center space-x-3 p-3 rounded-xl border text-left transition-all',
+                      isActive
+                        ? 'bg-gradient-to-r from-purple-900 to-cyan-950 text-cyan-300 border-cyan-400 shadow-lg'
+                        : 'bg-slate-900/80 border-purple-500/20 text-slate-300 hover:border-purple-500/40'
+                    )}
+                  >
+                    <div className="p-2 rounded-lg bg-purple-950/80 border border-purple-500/30 shrink-0">
+                      <Icon className="w-5 h-5 text-cyan-400" />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-xs font-orbitron font-bold truncate">{item.label}</div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
       )}

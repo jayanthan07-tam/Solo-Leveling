@@ -13,6 +13,7 @@ import { Sidebar } from './components/layout/Sidebar';
 import { PlayerHeader } from './components/layout/PlayerHeader';
 import { BottomNavigation } from './components/layout/BottomNavigation';
 import { LevelUpModal } from './components/ui/LevelUpModal';
+import { BalanceModal } from './components/ui/BalanceModal';
 
 // Views
 import { AuthView } from './components/views/AuthView';
@@ -33,11 +34,40 @@ import { SettingsView } from './components/views/SettingsView';
 
 export function App() {
   const [state, setState] = useState<AppState>(loadInitialState);
+  const [showBalanceModal, setShowBalanceModal] = useState(false);
 
   useEffect(() => {
     saveStateToStorage(state);
     syncToSupabase(state);
   }, [state]);
+
+  const handleClaimDailyReward = () => {
+    const today = new Date().toISOString().split('T')[0];
+    if (state.stats.dailyRewardStatus === 'CLAIMED' && state.stats.lastDailyRewardDate === today) return;
+
+    setState((prev) => ({
+      ...prev,
+      stats: {
+        ...prev.stats,
+        gems: (prev.stats.gems || 0) + 10,
+        dailyRewardStatus: 'CLAIMED' as const,
+        lastDailyRewardDate: today,
+        totalRewards: (prev.stats.totalRewards || 0) + 1,
+      },
+      transactions: [
+        {
+          id: 'tx-daily-' + Date.now(),
+          type: 'EARNED' as const,
+          amount: 100,
+          description: 'Daily System Reward Claimed (+10 Gems 💎, +50 XP ⚡)',
+          createdAt: new Date().toISOString(),
+        },
+        ...prev.transactions,
+      ],
+    }));
+
+    awardXpAndCoins(50, 100);
+  };
 
   const handleAuthComplete = (profile: PlayerProfile, stats: PlayerStats) => {
     setState((prev) => ({
@@ -334,7 +364,14 @@ export function App() {
   const renderActiveView = () => {
     switch (state.activeView) {
       case 'dashboard':
-        return <DashboardView state={state} onSelectView={(v) => setState((p) => ({ ...p, activeView: v }))} onCompleteQuest={handleCompleteQuest} />;
+        return (
+          <DashboardView
+            state={state}
+            onSelectView={(v) => setState((p) => ({ ...p, activeView: v }))}
+            onCompleteQuest={handleCompleteQuest}
+            onOpenBalancePopup={() => setShowBalanceModal(true)}
+          />
+        );
       case 'quests':
         return <QuestsView quests={state.quests} onCompleteQuest={handleCompleteQuest} onAddCustomQuest={handleAddCustomQuest} />;
       case 'study':
@@ -376,11 +413,11 @@ export function App() {
         <PlayerHeader
           profile={state.profile}
           stats={state.stats}
-          onOpenBalance={() => setState((p) => ({ ...p, activeView: 'balance' }))}
+          onOpenBalance={() => setShowBalanceModal(true)}
           onOpenProfile={() => setState((p) => ({ ...p, activeView: 'profile' }))}
         />
 
-        <main className="flex-1 p-4 md:p-6 lg:p-8 max-w-7xl w-full mx-auto">
+        <main className="flex-1 p-4 md:p-6 lg:p-8 max-w-7xl w-full mx-auto pb-[calc(5.5rem+env(safe-area-inset-bottom))] lg:pb-8">
           {renderActiveView()}
         </main>
 
@@ -396,6 +433,14 @@ export function App() {
           coinsAwarded={state.levelUpModal.coinsAwarded}
         />
       )}
+
+      <BalanceModal
+        isOpen={showBalanceModal}
+        onClose={() => setShowBalanceModal(false)}
+        profile={state.profile}
+        stats={state.stats}
+        onClaimDailyReward={handleClaimDailyReward}
+      />
     </div>
   );
 }

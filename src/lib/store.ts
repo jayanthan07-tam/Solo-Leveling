@@ -83,6 +83,9 @@ export const initialStats: PlayerStats = {
   xp: 0,
   requiredXp: 100,
   coins: 0,
+  gems: 0,
+  dailyRewardStatus: 'AVAILABLE',
+  totalRewards: 0,
   totalXp: 0,
   totalCoinsEarned: 0,
   totalCoinsSpent: 0,
@@ -109,9 +112,20 @@ export function loadInitialState(): AppState {
     const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
+      const today = new Date().toISOString().split('T')[0];
+      const statsFromStorage = parsed.stats || {};
+      const isDailyRewardResetNeeded = statsFromStorage.lastDailyRewardDate !== today;
+
       return {
         ...getEmptyState(),
         ...parsed,
+        stats: {
+          ...initialStats,
+          ...statsFromStorage,
+          gems: statsFromStorage.gems ?? 0,
+          dailyRewardStatus: isDailyRewardResetNeeded ? 'AVAILABLE' : (statsFromStorage.dailyRewardStatus || 'AVAILABLE'),
+          totalRewards: statsFromStorage.totalRewards ?? 0,
+        },
         quests: parsed.quests?.length ? parsed.quests : DEFAULT_QUESTS,
         achievements: parsed.achievements?.length ? parsed.achievements : DEFAULT_ACHIEVEMENTS,
         inventory: parsed.inventory?.length ? parsed.inventory : DEFAULT_SHOP_ITEMS,

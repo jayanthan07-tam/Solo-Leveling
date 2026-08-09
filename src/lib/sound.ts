@@ -9,15 +9,23 @@ class SoundSystem {
   }
 
   private initCtx() {
-    if (!this.ctx && typeof window !== 'undefined') {
-      const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-      if (AudioCtx) {
-        this.ctx = new AudioCtx();
+    try {
+      if (!this.ctx && typeof window !== 'undefined') {
+        const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+        if (AudioCtx) {
+          this.ctx = new AudioCtx();
+        }
       }
+      if (this.ctx && this.ctx.state === 'suspended') {
+        this.ctx.resume().catch(() => {});
+      }
+    } catch {
+      // AudioContext unavailable or restricted
     }
-    if (this.ctx && this.ctx.state === 'suspended') {
-      this.ctx.resume();
-    }
+  }
+
+  public unlockAudio() {
+    this.initCtx();
   }
 
   public setEnabled(enabled: boolean) {
@@ -179,3 +187,16 @@ class SoundSystem {
 }
 
 export const sound = new SoundSystem();
+
+if (typeof window !== 'undefined') {
+  const unlock = () => {
+    sound.unlockAudio();
+    window.removeEventListener('touchstart', unlock);
+    window.removeEventListener('pointerdown', unlock);
+    window.removeEventListener('click', unlock);
+  };
+  window.addEventListener('touchstart', unlock, { passive: true });
+  window.addEventListener('pointerdown', unlock, { passive: true });
+  window.addEventListener('click', unlock, { passive: true });
+}
+

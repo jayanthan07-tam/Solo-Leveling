@@ -23,12 +23,14 @@ interface DashboardViewProps {
   state: AppState;
   onSelectView: (view: string) => void;
   onCompleteQuest: (questId: string) => void;
+  onOpenBalancePopup?: () => void;
 }
 
 export const DashboardView: React.FC<DashboardViewProps> = ({
   state,
   onSelectView,
   onCompleteQuest,
+  onOpenBalancePopup,
 }) => {
   const { profile, stats, quests } = state;
   const [lifeTime, setLifeTime] = useState(calculateLifeTime(profile?.dob || '2005-01-10'));
@@ -74,6 +76,67 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
           <div className="w-full md:w-auto">
             <LevelCard level={stats.level} title={stats.equippedTitle} className="w-full md:w-64" />
+          </div>
+        </div>
+      </GlassPanel>
+
+      {/* SYSTEM VAULT & PLAYER WALLET DASHBOARD CARD */}
+      <GlassPanel variant="purple" className="p-4 sm:p-5 bg-gradient-to-r from-amber-950/40 via-purple-950/50 to-cyan-950/40 border-amber-500/40">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-purple-500/20">
+          <div>
+            <div className="text-[10px] font-orbitron text-amber-400 tracking-widest uppercase flex items-center gap-1">
+              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+              <span>SYSTEM VAULT & PLAYER WALLET</span>
+            </div>
+            <h3 className="text-base font-bold font-orbitron text-slate-100 mt-0.5">
+              CURRENCY & REWARDS SUMMARY
+            </h3>
+          </div>
+
+          <button
+            onClick={() => {
+              sound.playClick();
+              if (onOpenBalancePopup) onOpenBalancePopup();
+              else onSelectView('balance');
+            }}
+            className="w-full sm:w-auto px-4 py-2 rounded-xl liquid-btn font-orbitron font-bold text-xs text-white flex items-center justify-center space-x-1.5 min-h-[44px]"
+          >
+            <span>[ OPEN SYSTEM VAULT ]</span>
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 font-orbitron text-xs">
+          <div className="p-2.5 rounded-lg bg-slate-950/80 border border-amber-500/30">
+            <div className="text-[10px] text-amber-400">GOLD 🪙</div>
+            <div className="text-lg font-black text-amber-300 font-mono mt-0.5">
+              {stats.coins} G
+            </div>
+          </div>
+
+          <div className="p-2.5 rounded-lg bg-slate-950/80 border border-cyan-500/30">
+            <div className="text-[10px] text-cyan-400">GEMS 💎</div>
+            <div className="text-lg font-black text-cyan-300 font-mono mt-0.5">
+              {stats.gems || 0}
+            </div>
+          </div>
+
+          <div className="p-2.5 rounded-lg bg-slate-950/80 border border-purple-500/30">
+            <div className="text-[10px] text-purple-300">XP ⚡ PROGRESS</div>
+            <div className="text-base font-bold text-purple-200 mt-0.5">
+              {stats.xp} / {stats.requiredXp}
+            </div>
+          </div>
+
+          <div className="p-2.5 rounded-lg bg-slate-950/80 border border-green-500/30">
+            <div className="text-[10px] text-slate-400">DAILY REWARD</div>
+            <div
+              className={`text-xs font-bold mt-1 ${
+                stats.dailyRewardStatus === 'AVAILABLE' ? 'text-green-400 animate-pulse' : 'text-slate-400'
+              }`}
+            >
+              {stats.dailyRewardStatus === 'AVAILABLE' ? '⚡ AVAILABLE' : '✓ CLAIMED'}
+            </div>
           </div>
         </div>
       </GlassPanel>

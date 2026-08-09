@@ -20,6 +20,10 @@ export interface PlayerStats {
   xp: number;
   requiredXp: number;
   coins: number;
+  gems: number;
+  dailyRewardStatus: 'AVAILABLE' | 'CLAIMED';
+  lastDailyRewardDate?: string;
+  totalRewards: number;
   totalXp: number;
   totalCoinsEarned: number;
   totalCoinsSpent: number;

@@ -54,11 +54,11 @@ export const StatsView: React.FC<StatsViewProps> = ({ stats }) => {
             <span>ATTRIBUTE RADAR CHART</span>
           </div>
 
-          <div className="w-full h-80">
+          <div className="w-full h-72 sm:h-80 min-h-[280px]">
             <ResponsiveContainer width="100%" height="100%">
-              <RadarChart cx="50%" cy="50%" outerRadius="75%" data={radarData}>
+              <RadarChart cx="50%" cy="50%" outerRadius="70%" data={radarData}>
                 <PolarGrid stroke="#a855f7" strokeOpacity={0.3} />
-                <PolarAngleAxis dataKey="subject" stroke="#00f0ff" tick={{ fill: '#00f0ff', fontSize: 10, fontFamily: 'Orbitron' }} />
+                <PolarAngleAxis dataKey="subject" stroke="#00f0ff" tick={{ fill: '#00f0ff', fontSize: 9, fontFamily: 'Orbitron' }} />
                 <PolarRadiusAxis angle={30} domain={[0, 100]} stroke="#a855f7" strokeOpacity={0.2} />
                 <Radar name="Player Stats" dataKey="A" stroke="#00f0ff" fill="#a855f7" fillOpacity={0.5} />
               </RadarChart>
