@@ -66,8 +66,8 @@ The **Solo Leveling Life System** transforms your daily habit development into a
 
 ### 2. Installation
 ```bash
-git clone https://github.com/your-username/solo-leveling-life-system.git
-cd solo-leveling-life-system
+git clone https://github.com/jayanthan07-tam/Solo-Leveling.git
+cd Solo-Leveling
 npm install
 ```
 
