@@ -19,12 +19,12 @@
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     <script>
+      // Clear legacy service worker registrations to ensure fresh GitHub Pages asset loading
       if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          const swUrl = (window.location.pathname.endsWith('/') ? window.location.pathname : window.location.pathname + '/') + 'sw.js';
-          navigator.serviceWorker.register(swUrl).catch(err => {
-            console.log('SW registration note: ', err);
-          });
+        navigator.serviceWorker.getRegistrations().then((registrations) => {
+          for (const registration of registrations) {
+            registration.unregister();
+          }
         });
       }
     </script>
