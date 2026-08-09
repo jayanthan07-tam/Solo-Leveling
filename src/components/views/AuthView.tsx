@@ -4,6 +4,7 @@ import type { PlayerProfile, PlayerStats } from '../../types';
 import { calculateAge, generatePlayerId } from '../../lib/utils';
 import { sound } from '../../lib/sound';
 import { initialStats } from '../../lib/store';
+import { supabase, isSupabaseConfigured } from '../../lib/supabase';
 
 interface AuthViewProps {
   onCompleteAuth: (profile: PlayerProfile, stats: PlayerStats) => void;
@@ -15,6 +16,7 @@ export const AuthView: React.FC<AuthViewProps> = ({ onCompleteAuth }) => {
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [loginError, setLoginError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const [name, setName] = useState('');
   const [dob, setDob] = useState('2005-01-10');
@@ -30,33 +32,76 @@ export const AuthView: React.FC<AuthViewProps> = ({ onCompleteAuth }) => {
 
   const calculatedAge = calculateAge(dob);
 
-  const handleLoginSubmit = (e: React.FormEvent) => {
+  const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     sound.playClick();
+    setLoginError('');
+
     if (!loginEmail || !loginPassword) {
       setLoginError('Please enter Player ID/Email and Password.');
       sound.playError();
       return;
     }
 
-    const pid = loginEmail.startsWith('SOLO-') ? loginEmail : generatePlayerId();
-    const mockProfile: PlayerProfile = {
-      id: 'usr-' + Date.now(),
-      userId: 'sub-' + Date.now(),
-      playerId: pid,
-      name: loginEmail.split('@')[0] || 'HUNTER',
-      dob: '2005-01-10',
-      gender: 'Unspecified',
-      weight: 70,
-      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
+    setIsLoading(true);
 
-    onCompleteAuth(mockProfile, initialStats);
+    try {
+      if (isSupabaseConfigured && supabase) {
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: loginEmail,
+          password: loginPassword,
+        });
+
+        if (error) {
+          setLoginError(error.message);
+          sound.playError();
+          setIsLoading(false);
+          return;
+        }
+
+        if (data.user) {
+          const mockProfile: PlayerProfile = {
+            id: 'usr-' + data.user.id,
+            userId: data.user.id,
+            playerId: generatePlayerId(),
+            name: data.user.email?.split('@')[0] || 'HUNTER',
+            dob: '2005-01-10',
+            gender: 'Unspecified',
+            weight: 70,
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          };
+          setIsLoading(false);
+          onCompleteAuth(mockProfile, initialStats);
+          return;
+        }
+      }
+
+      // Offline / Local Fallback Mode
+      const pid = loginEmail.startsWith('SOLO-') ? loginEmail : generatePlayerId();
+      const mockProfile: PlayerProfile = {
+        id: 'usr-' + Date.now(),
+        userId: 'sub-' + Date.now(),
+        playerId: pid,
+        name: loginEmail.split('@')[0] || 'HUNTER',
+        dob: '2005-01-10',
+        gender: 'Unspecified',
+        weight: 70,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      setIsLoading(false);
+      onCompleteAuth(mockProfile, initialStats);
+    } catch {
+      setLoginError('Authentication service failed. Operating in local mode.');
+      sound.playError();
+      setIsLoading(false);
+    }
   };
 
-  const handleRegisterSubmit = (e: React.FormEvent) => {
+  const handleRegisterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     sound.playClick();
     setRegError('');
@@ -104,23 +149,51 @@ export const AuthView: React.FC<AuthViewProps> = ({ onCompleteAuth }) => {
       return;
     }
 
-    const newPlayerId = generatePlayerId();
+    setIsLoading(true);
 
-    const newProfile: PlayerProfile = {
-      id: 'prof-' + Date.now(),
-      userId: 'user-' + Date.now(),
-      playerId: newPlayerId,
-      name: name.trim(),
-      dob,
-      gender,
-      weight: Number(weight),
-      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
+    try {
+      let subUserId = 'user-' + Date.now();
 
-    setCreatedProfile(newProfile);
-    setMode('init');
+      if (isSupabaseConfigured && supabase) {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+        });
+
+        if (error) {
+          setRegError(error.message);
+          sound.playError();
+          setIsLoading(false);
+          return;
+        }
+
+        if (data.user) {
+          subUserId = data.user.id;
+        }
+      }
+
+      const newPlayerId = generatePlayerId();
+      const newProfile: PlayerProfile = {
+        id: 'prof-' + Date.now(),
+        userId: subUserId,
+        playerId: newPlayerId,
+        name: name.trim(),
+        dob,
+        gender,
+        weight: Number(weight),
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+
+      setIsLoading(false);
+      setCreatedProfile(newProfile);
+      setMode('init');
+    } catch {
+      setRegError('Failed to initialize account with Auth provider.');
+      sound.playError();
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -210,9 +283,10 @@ export const AuthView: React.FC<AuthViewProps> = ({ onCompleteAuth }) => {
 
               <button
                 type="submit"
+                disabled={isLoading}
                 className="w-full py-3 rounded-xl liquid-btn font-orbitron font-bold text-sm tracking-wider text-white flex items-center justify-center space-x-2"
               >
-                <span>LOGIN</span>
+                <span>{isLoading ? 'AUTHENTICATING...' : 'LOGIN'}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </form>
@@ -356,9 +430,10 @@ export const AuthView: React.FC<AuthViewProps> = ({ onCompleteAuth }) => {
 
               <button
                 type="submit"
+                disabled={isLoading}
                 className="w-full py-3 mt-4 rounded-xl liquid-btn font-orbitron font-bold text-sm tracking-wider text-white"
               >
-                INITIALIZE PLAYER ACCOUNT
+                {isLoading ? 'INITIALIZING ACCOUNT...' : 'INITIALIZE PLAYER ACCOUNT'}
               </button>
             </form>
 
