@@ -1,4 +1,4 @@
-const CACHE_NAME = 'solo-system-v2';
+const CACHE_NAME = 'solo-system-v3';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -39,17 +39,28 @@ self.addEventListener('fetch', (event) => {
   // Skip non-http/https schemes
   if (url.protocol !== 'http:' && url.protocol !== 'https:') return;
 
+  // Network-first strategy to prevent stale HTML/bundle mismatch on GitHub Pages deployments
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-      return fetch(event.request).catch(() => {
-        if (event.request.mode === 'navigate') {
-          return caches.match('./index.html') || caches.match('./');
+    fetch(event.request)
+      .then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200) {
+          const responseToCache = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseToCache);
+          });
         }
-        return Promise.reject('Offline fetch failed');
-      });
-    })
+        return networkResponse;
+      })
+      .catch(() => {
+        return caches.match(event.request).then((cachedResponse) => {
+          if (cachedResponse) {
+            return cachedResponse;
+          }
+          if (event.request.mode === 'navigate') {
+            return caches.match('./index.html') || caches.match('./');
+          }
+          return Promise.reject('Offline fetch failed');
+        });
+      })
   );
 });
